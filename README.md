@@ -22,6 +22,9 @@ Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 ![pebble screenshot 2](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/resources/screenshots/pebble_screenshot2.png)
 ![pebble screenshot 3](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/resources/screenshots/pebble_screenshot3.png)
 ![pebble screenshot 4](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/resources/screenshots/pebble_screenshot4.png)
+![pebble screenshot 5](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/resources/screenshots/pebble_screenshot5.png)
+![pebble screenshot 6](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/resources/screenshots/pebble_screenshot6.png)
+![pebble screenshot 7](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/resources/screenshots/pebble_screenshot7.png)
 ![android screenshot 1](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/resources/screenshots/android_screenshot1_small.png)
 
 ## JSON
@@ -58,3 +61,7 @@ JSON output example (some fields are optional):
 
 - 0 - Black
 - 1 - White
+
+## Bugs
+
+Sometime after install JS app fails to start, issue related Pebble App. Force stop Pebble App and start it again.
