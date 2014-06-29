@@ -4,6 +4,8 @@ Pebble watches application to show only your own data, prepared on your own serv
 Sources available on [github](https://github.com/bahbka/pebble-my-data).
 Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 
+[My Data at Pebble App Store](https://apps.getpebble.com/applications/53b0607c94943f8e710001e2)
+
 ## Features
 
 * Fetch JSON from custom URL, specified in settings
