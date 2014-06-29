@@ -4,7 +4,7 @@ Pebble watches application to show only your own data, prepared on your own serv
 Sources available on [github](https://github.com/bahbka/pebble-my-data).
 Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 
-# Features
+## Features
 
 * Fetch JSON from custom URL, specified in settings
 * No companion app required, using PebbleKit JS
@@ -17,37 +17,37 @@ Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 * Vibrate on bluetooth connection loss
 * Watches battery charge status
 
-# JSON
+## JSON
 
 JSON output example (some fields are optional):
 
     {
-      "content": "Hello\\nWorld!",
+      "content": "Hello\nWorld!",
       "refresh": 300,
       "vibrate": 0,
       "font": 4,
       "theme": 0
     }
 
-# Vibrate
+### Vibrate
 
-0 - Don't vibrate
-1 - Short vibrate
-2 - Double vibrate
-3 - Long vibrate
+- 0 - Don't vibrate
+- 1 - Short vibrate
+- 2 - Double vibrate
+- 3 - Long vibrate
 
-# Fonts
+### Fonts
 
-1 - FONT_KEY_GOTHIC_14
-2 - FONT_KEY_GOTHIC_14_BOLD
-3 - FONT_KEY_GOTHIC_18
-4 - FONT_KEY_GOTHIC_18_BOLD
-5 - FONT_KEY_GOTHIC_24
-6 - FONT_KEY_GOTHIC_24_BOLD
-7 - FONT_KEY_GOTHIC_28
-8 - FONT_KEY_GOTHIC_28_BOLD
+- 1 - FONT_KEY_GOTHIC_14
+- 2 - FONT_KEY_GOTHIC_14_BOLD
+- 3 - FONT_KEY_GOTHIC_18
+- 4 - FONT_KEY_GOTHIC_18_BOLD
+- 5 - FONT_KEY_GOTHIC_24
+- 6 - FONT_KEY_GOTHIC_24_BOLD
+- 7 - FONT_KEY_GOTHIC_28
+- 8 - FONT_KEY_GOTHIC_28_BOLD
 
-# Theme
+### Theme
 
-0 - Black
-1 - White
+- 0 - Black
+- 1 - White
