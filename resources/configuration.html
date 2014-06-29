@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body { background-color: black; text-align: center; color: white }
+      h1,h3 { margin: 0; padding: 0 }
+      h3 { color: gray }
+      h4 { text-align: center; margin: 0; padding: 0 }
+      input { height: 40px; font-size: 20px }
+      .url { width: 95% }
+      .submit { width: 50% }
+      .example { text-align: left }
+    </style>
+  </head>
+  <body>
+    <h1>My Data</h1>
+    <h3>v1.0.0, by bahbka</h3>
+    <br><br>
+    <form action="javascript: settings();" id="settings_form">
+      <h4>my server URL:</h4>
+      <input type="text" id="url" class="url" value="_URL_">
+      <input type="submit" id="save" class="submit" value="save and apply">
+    </form>
+    <br><br><br>
+    sample server output:
+    <pre class="example">
+{
+  "content": "Hello\\nWorld!",
+  "refresh": 300, // refresh delay, seconds
+  "vibrate": 0,   // 0..3, 0 - don't vibrate
+  "font": 1,      // 1..8, try them all
+  "theme": 0      // 0 - black, 1 - white
+}
+    </pre>
+
+    <script>
+      function settings() {
+        var form = document.getElementById('settings_form');
+        for (configuration = {}, i = 0; i < form.length ; i++) {
+	  id = form[i].id;
+	  if (id != "save") {
+	    configuration[id] = form[i].value;
+	  }
+	}
+        return window.location.href = "pebblejs://close#" + encodeURIComponent(JSON.stringify(configuration));
+      }
+    </script>
+  </body>
+</html>

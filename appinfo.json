@@ -1,0 +1,54 @@
+{
+  "uuid": "9be6e663-b542-49f3-82d9-9bc174ddc63a",
+  "shortName": "My Data",
+  "longName": "My Data",
+  "companyName": "bahbka",
+  "versionCode": 1,
+  "versionLabel": "1.0.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "capabilities": [ "configurable" ],
+  "appKeys": {
+    "content": 0,
+    "refresh":  1,
+    "vibrate": 2,
+    "font": 3,
+    "theme": 4
+  },
+  "resources": {
+    "media": [
+      {
+      	"type": "png",
+	"name": "ICON",
+	"file": "app_icon.png",
+	"menuIcon": true
+      },
+      {
+      	"type": "png-trans",
+	"name": "WBATT",
+	"file": "wbatt.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "WBATT_CHARGE",
+	"file": "wbatt_charge.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "NO_PHONE",
+	"file": "no_phone.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "UPDATE",
+	"file": "update.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "UPDATE_ERROR",
+	"file": "update_error.png"
+      }
+    ]
+  }
+}
