@@ -1,3 +1,5 @@
 
 # Ignore build generated files
 build
+src/js/pebble-js-app.js
+.lock-waf_linux2_build
