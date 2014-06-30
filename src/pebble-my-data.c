@@ -34,14 +34,13 @@ static GBitmap *update_error_icon_bitmap = NULL;
 static AppTimer *timer = NULL;
 static AppTimer *timeout_timer = NULL;
 
+static uint8_t theme = 255;
+
 #define DEFAULT_REFRESH 300*1000
 #define RETRY_DELAY 60*1000
 #define REQUEST_TIMEOUT 30*1000
 
-static uint8_t theme = 255;
-
-// AppMessage keys
-enum {
+enum { // AppMessage keys
   KEY_CONTENT,
   KEY_REFRESH,
   KEY_VIBRATE,
@@ -49,9 +48,22 @@ enum {
   KEY_THEME
 };
 
+enum { // update types
+  PERIODIC_UPDATE,
+  SHORT_PRESS_UPDATE,
+  LONG_PRESS_UPDATE
+};
+
+enum { // themes
+  THEME_BLACK,
+  THEME_WHITE
+};
+
+static uint8_t update_type = PERIODIC_UPDATE;
+
 // fill layer used for drawing line and battery charge
 static void fill_layer(Layer *layer, GContext* ctx) {
-  if (theme != 0) {
+  if (theme != THEME_BLACK) {
     graphics_context_set_fill_color(ctx, GColorBlack);
   } else {
     graphics_context_set_fill_color(ctx, GColorWhite);
@@ -68,10 +80,11 @@ static void request_update() {
   layer_set_hidden(bitmap_layer_get_layer(update_icon_layer), false);
 
   // prepare request
-  DictionaryIterator *iter;
-  app_message_outbox_begin(&iter);
-  Tuplet value = TupletInteger(KEY_REFRESH, 255);
-  dict_write_tuplet(iter, &value);
+  DictionaryIterator *send_message;
+  app_message_outbox_begin(&send_message);
+
+  Tuplet value = TupletInteger(KEY_REFRESH, update_type);
+  dict_write_tuplet(send_message, &value);
 
   app_message_outbox_send();
 
@@ -80,7 +93,7 @@ static void request_update() {
 }
 
 // schedule request_update
-static void schedule_update(uint32_t delay) {
+static void schedule_update(uint32_t delay, uint8_t type) {
   if (timeout_timer) {
     app_timer_cancel(timeout_timer);
   }
@@ -89,13 +102,14 @@ static void schedule_update(uint32_t delay) {
     app_timer_cancel(timer);
   }
 
+  update_type = type; // can't win callbacks data :( use global variable
   timeout_timer = app_timer_register(delay, request_update, NULL);
 }
 
 // reschedule update if data waiting timed out, also set update_error icon
 static void request_timeout() {
   bitmap_layer_set_bitmap(update_icon_layer, update_error_icon_bitmap);
-  schedule_update(RETRY_DELAY);
+  schedule_update(RETRY_DELAY, PERIODIC_UPDATE);
 }
 
 // handle minute tick to update time/date (got from Simplicity watchface without modification)
@@ -149,7 +163,7 @@ static void handle_battery(BatteryChargeState charge_state) {
 static void handle_bluetooth(bool connected) {
   if (connected) {
     layer_set_hidden(bitmap_layer_get_layer(no_phone_icon_layer), true);
-    schedule_update(5 * 1000); // schedule update when connection made
+    schedule_update(5 * 1000, PERIODIC_UPDATE); // schedule update when connection made
   } else {
     layer_set_hidden(bitmap_layer_get_layer(no_phone_icon_layer), false);
     vibes_long_pulse(); // achtung! phone lost!
@@ -197,13 +211,13 @@ static void update_info_layer(char *content, uint8_t font) {
 
 // change theme (black/white), do things only when theme realy changed
 static void change_theme(uint8_t t) {
-  if ((t == 0 || t == 1) && (t != theme)) {
+  if ((t == THEME_BLACK || t == THEME_WHITE) && (t != theme)) {
     theme = t;
 
     uint8_t bg = GColorBlack;
     uint8_t fg = GColorWhite;
 
-    if (theme == 1) {
+    if (theme == THEME_WHITE) {
       bg = GColorWhite;
       fg = GColorBlack;
     }
@@ -234,7 +248,7 @@ static void change_theme(uint8_t t) {
       gbitmap_destroy(update_error_icon_bitmap);
     }
 
-    if (theme == 0) {
+    if (theme == THEME_BLACK) {
       wbatt_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_WBATT_WHITE);
       wbatt_charge_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_WBATT_CHARGE_WHITE);
       no_phone_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_NO_PHONE_WHITE);
@@ -264,13 +278,13 @@ void out_sent_handler(DictionaryIterator *sent, void *context) {
 // reschedule update if request_update sending failed, also set update_error icon
 void out_failed_handler(DictionaryIterator *failed, AppMessageResult reason, void *context) {
   bitmap_layer_set_bitmap(update_icon_layer, update_error_icon_bitmap);
-  schedule_update(RETRY_DELAY);
+  schedule_update(RETRY_DELAY, PERIODIC_UPDATE);
 }
 
 // reschedule update if received data dropped, also set update_error icon
 void in_dropped_handler(AppMessageResult reason, void *context) {
   bitmap_layer_set_bitmap(update_icon_layer, update_error_icon_bitmap);
-  schedule_update(RETRY_DELAY);
+  schedule_update(RETRY_DELAY, PERIODIC_UPDATE);
 }
 
 // process received data
@@ -320,18 +334,17 @@ void in_received_handler(DictionaryIterator *received, void *context) {
     delay = refresh->value->uint32 * 1000;
   }
 
-  schedule_update(delay);
+  schedule_update(delay, PERIODIC_UPDATE);
 }
 
 // force update on select short click
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-  schedule_update(0);
+  schedule_update(0, SHORT_PRESS_UPDATE);
 }
 
 // force update on select long click
-// TODO longpress - second url
 static void select_long_click_handler(ClickRecognizerRef recognizer, void *context) {
-  schedule_update(0);
+  schedule_update(0, LONG_PRESS_UPDATE);
 }
 
 // handle select button clicks
@@ -396,7 +409,7 @@ static void window_load(Window *window) {
   layer_add_child(window_layer, scroll_layer_get_layer(scroll_layer));
 
   // apply black theme
-  change_theme(0);
+  change_theme(THEME_BLACK);
 
   // subscribe events
   battery_state_service_subscribe(&handle_battery);

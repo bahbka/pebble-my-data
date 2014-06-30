@@ -13,6 +13,7 @@ Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 * Fetch JSON from custom URL, specified in settings
 * No companion app required, using PebbleKit JS
 * Force update with select button
+* Append short=1 or long=1 GET param on short/long select button update
 * Scrollable data area
 * Custom update interval, specified in JSON
 * Vibrate on update if specified in JSON
@@ -41,6 +42,7 @@ JSON output example (some fields are optional):
       "theme": 0
     }
 
+GET param short=1 or long=1 added to URL on short or long select button update
 ### Vibrate
 
 - 0 - Don't vibrate
@@ -50,14 +52,14 @@ JSON output example (some fields are optional):
 
 ### Fonts
 
-- 1 - FONT_KEY_GOTHIC_14
-- 2 - FONT_KEY_GOTHIC_14_BOLD
-- 3 - FONT_KEY_GOTHIC_18
-- 4 - FONT_KEY_GOTHIC_18_BOLD
-- 5 - FONT_KEY_GOTHIC_24
-- 6 - FONT_KEY_GOTHIC_24_BOLD
-- 7 - FONT_KEY_GOTHIC_28
-- 8 - FONT_KEY_GOTHIC_28_BOLD
+- 1 - GOTHIC_14
+- 2 - GOTHIC_14_BOLD
+- 3 - GOTHIC_18
+- 4 - GOTHIC_18_BOLD
+- 5 - GOTHIC_24
+- 6 - GOTHIC_24_BOLD
+- 7 - GOTHIC_28
+- 8 - GOTHIC_28_BOLD
 
 ### Theme
 
