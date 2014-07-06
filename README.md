@@ -14,21 +14,48 @@ Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 * No companion app required, using PebbleKit JS
 * Force update with select button
 * Append short=1 or long=1 GET param on short/long select button update
+* Append coordinates to URL (configurable)
 * Scrollable data area
 * Custom update interval, specified in JSON
 * Vibrate on update if specified in JSON
 * Change text font from JSON
 * Black/white theme switched from JSON
-* Vibrate on bluetooth connection loss
+* Turn on light from JSON
+* Blink content from JSON
+* Scroll-up content after update from JSON
+* Vibrate on bluetooth connection loss (configurable)
 * Watches battery charge status
+* Digital clock (12h/24h support), seconds dots blinking (configurable)
+
+## Changelog
+
+### 2.0.3
+
+- Append coordinates to URL (configurable)
+- Digital clock font, AM/PM support
+- Seconds dots blinking (configurable)
+- Configurable vibration on bluetooth loss
+- Turn on light (value in JSON)
+- Blink content (value in JSON)
+- Scroll-up content after update (value in JSON)
+- Improved configuration page
+- Some minor fixes
+
+### 1.1.0
+
+- Append short=1 or long=1 GET param to URL on short/long select button update 
+
+### 1.0.0
+
+- Initial release
 
 ## Screenshots
-![pebble screenshot 1](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/pebble_screenshot1.png)
-![pebble screenshot 2](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/pebble_screenshot2.png)
-![pebble screenshot 6](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/pebble_screenshot6.png)
-![pebble screenshot 4](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/pebble_screenshot4.png)
-![pebble screenshot 7](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/pebble_screenshot7.png)
-![android screenshot 1](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/android_screenshot1_small.png)
+![pebble screenshot 1](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/pebble-screenshot_2014-07-06_18-18-15.png)
+![pebble screenshot 2](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/pebble-screenshot_2014-07-06_18-19-33.png)
+![pebble screenshot 3](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/pebble-screenshot_2014-07-06_18-23-00.png)
+![pebble screenshot 4](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/pebble-screenshot_2014-07-06_18-26-22.png)
+![pebble screenshot 5](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/pebble-screenshot_2014-07-06_18-27-09.png)
+![android screenshot 1](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/Screenshot_2014-07-06-18-31-03_small.png)
 
 ## JSON
 
@@ -39,7 +66,10 @@ JSON output example (some fields are optional):
       "refresh": 300,
       "vibrate": 0,
       "font": 4,
-      "theme": 0
+      "theme": 0,
+      "scroll": 1,
+      "light": 1,
+      "blink": 3
     }
 
 GET param short=1 or long=1 added to URL on short or long select button update
@@ -65,6 +95,20 @@ GET param short=1 or long=1 added to URL on short or long select button update
 
 - 0 - Black
 - 1 - White
+
+### Scroll
+
+- 0 - Keep position
+- 1 - Scroll up
+
+### Light
+
+- 0 - Do nothing
+- 1 - Turn pebble light on for short time
+
+### Blink
+
+- 1..10 - Blink content count (blinks with black/white for "count" times)
 
 ## Bugs
 
