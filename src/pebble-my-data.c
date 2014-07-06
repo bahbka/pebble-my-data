@@ -267,7 +267,11 @@ static void update_info_layer(char *content, uint8_t font, bool scroll_up) {
   text_layer_set_text(text_info_layer, content); // set text
   GSize max_size = text_layer_get_content_size(text_info_layer);
   max_size.w = 144;
-  max_size.h += 4;
+  if (max_size.h < (168 - 31)) {
+    max_size.h = (168 - 31);
+  } else {
+    max_size.h += 4;
+  }
   text_layer_set_size(text_info_layer, max_size); // resize layer
   scroll_layer_set_content_size(scroll_layer, GSize(144, max_size.h)); // resize scroll layer
   if (scroll_up) {
