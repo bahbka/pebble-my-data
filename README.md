@@ -74,11 +74,11 @@ JSON output example (some fields are optional):
 
 GET param short=1 or long=1 added to URL on short or long select button update
 
-### Content
+### content
 Your content to display. Use "\n" as CR.
 
 ### refresh
-Next update in seconds.
+Next update delay in seconds.
 
 ### vibrate
 
