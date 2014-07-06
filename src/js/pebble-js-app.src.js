@@ -10,7 +10,12 @@ var MSG = {
   ERROR: 5
 };
 
-var config = {};
+// default settings
+var config = {
+  "config_location": false,
+  "config_vibrate": true,
+  "config_seconds": true
+};
 
 function http_request(url) {
   var req = new XMLHttpRequest();
