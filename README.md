@@ -55,7 +55,7 @@ Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 ![pebble screenshot 3](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/pebble-screenshot_2014-07-06_18-23-00.png)
 ![pebble screenshot 4](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/pebble-screenshot_2014-07-06_18-26-22.png)
 ![pebble screenshot 5](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/pebble-screenshot_2014-07-06_18-27-09.png)
-![android screenshot 1](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/Screenshot_2014-07-06-18-31-03_small.png)
+[![android screenshot 1](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/Screenshot_2014-07-06-18-31-03_small.png)](https://raw.githubusercontent.com/bahbka/pebble-my-data/master/stuff/screenshots/Screenshot_2014-07-06-18-31-03.png)
 
 ## JSON
 
