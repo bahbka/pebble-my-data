@@ -73,14 +73,21 @@ JSON output example (some fields are optional):
     }
 
 GET param short=1 or long=1 added to URL on short or long select button update
-### Vibrate
+
+### Content
+Your content to display. Use "\n" as CR.
+
+### refresh
+Next update in seconds.
+
+### vibrate
 
 - 0 - Don't vibrate
 - 1 - Short vibrate
 - 2 - Double vibrate
 - 3 - Long vibrate
 
-### Fonts
+### font
 
 - 1 - GOTHIC_14
 - 2 - GOTHIC_14_BOLD
@@ -91,22 +98,22 @@ GET param short=1 or long=1 added to URL on short or long select button update
 - 7 - GOTHIC_28
 - 8 - GOTHIC_28_BOLD
 
-### Theme
+### theme
 
 - 0 - Black
 - 1 - White
 
-### Scroll
+### scroll
 
 - 0 - Keep position
 - 1 - Scroll up
 
-### Light
+### light
 
 - 0 - Do nothing
 - 1 - Turn pebble light on for short time
 
-### Blink
+### blink
 
 - 1..10 - Blink content count (blinks with black/white for "count" times)
 
