@@ -3,18 +3,25 @@
   "shortName": "My Data",
   "longName": "My Data",
   "companyName": "bahbka",
-  "versionCode": 2,
-  "versionLabel": "1.1.0",
+  "versionCode": 3,
+  "versionLabel": "1.2.0",
   "watchapp": {
     "watchface": false
   },
-  "capabilities": [ "configurable" ],
+  "capabilities": [ "configurable", "location" ],
   "appKeys": {
-    "content": 0,
-    "refresh":  1,
-    "vibrate": 2,
-    "font": 3,
-    "theme": 4
+    "msg_type":         0,
+    "content":          1,
+    "refresh":          2,
+    "vibrate":          3,
+    "font":             4,
+    "theme":            5,
+    "scroll":           6,
+    "light":            7,
+    "blink":            8,
+    "config_location":  9,
+    "config_vibrate":  10,
+    "config_seconds":  11
   },
   "resources": {
     "media": [
@@ -48,6 +55,91 @@
       	"type": "png-trans",
 	"name": "UPDATE_ERROR",
 	"file": "update_error.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "EMPTY",
+	"file": "empty.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "DIGIT_0",
+	"file": "digit_0.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "DIGIT_1",
+	"file": "digit_1.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "DIGIT_2",
+	"file": "digit_2.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "DIGIT_3",
+	"file": "digit_3.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "DIGIT_4",
+	"file": "digit_4.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "DIGIT_5",
+	"file": "digit_5.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "DIGIT_6",
+	"file": "digit_6.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "DIGIT_7",
+	"file": "digit_7.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "DIGIT_8",
+	"file": "digit_8.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "DIGIT_9",
+	"file": "digit_9.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "DIGIT_DOTS",
+	"file": "digit_dots.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "DIGIT_DOTS_SPACE",
+	"file": "digit_dots_space.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "DIGIT_0AM",
+	"file": "digit_0am.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "DIGIT_0PM",
+	"file": "digit_0pm.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "DIGIT_1AM",
+	"file": "digit_1am.png"
+      },
+      {
+      	"type": "png-trans",
+	"name": "DIGIT_1PM",
+	"file": "digit_1pm.png"
       }
     ]
   }

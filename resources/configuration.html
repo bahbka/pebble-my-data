@@ -1,53 +1,114 @@
 <!DOCTYPE html>
+<!-- -*-coding: utf-8 -*-
+vim: sw=2 ts=2 expandtab ai -->
+
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
       body { background-color: black; text-align: center; color: white }
-      h1,h3 { margin: 0; padding: 0 }
-      h3 { color: gray }
-      h4 { text-align: center; margin: 0; padding: 0 }
-      input { height: 40px; font-size: 20px }
-      .url { width: 95% }
-      .submit { width: 50% }
-      .example { text-align: left }
+      h1 { margin: 0 }
+      small { color: gray }
+      a { color: white }
+      input { height: 1.5em; font-size: 1.2em; font-weight: bold }
+      .url { width: 93%; margin: 0.5em }
+      .submit { width: 93%; margin: 0.4em }
+      .param { display: inline-table; width: 95%; height: 3em }
+      .label,.checkbox { display: table-cell; vertical-align: middle }
+      .label { text-align: left }
+      .checkbox { text-align: right; width: 1.5em; height: 1.5em }
+      .example { width: 75%; display: inline-block; text-align: left; font-size: 0.6em }
     </style>
+    <script>
+
+      var config = _CONFIG_;
+
+      function put_config() {
+        for (var param in config) {
+          var element = document.getElementById(param);
+          if (element) {
+            if (typeof config[param] === 'boolean') {
+              element.checked = config[param];
+            } else {
+              element.value = config[param];
+            }
+          }
+        }
+      }
+
+      function get_config() {
+        var form = document.getElementById('config_form');
+        for (config = {}, i = 0; i < form.length ; i++) {
+          id = form[i].id;
+          if (id != "save") {
+            if (form[i].type === 'checkbox') {
+              config[id] = form[i].checked;
+            } else {
+              config[id] = form[i].value;
+            }
+          }
+        }
+        return window.location.href = "pebblejs://close#" + encodeURIComponent(JSON.stringify(config));
+      }
+    </script>
   </head>
-  <body>
+  <body onload="put_config();">
     <h1>My Data</h1>
-    <h3>v1.1.0, by bahbka</h3>
-    <br><br>
-    <form action="javascript: settings();" id="settings_form">
-      <h4>my server URL:</h4>
-      <input type="text" id="url" class="url" value="_URL_">
+    <small>v1.2.0, by bahbka</small>
+    <hr size="1" />
+
+    <form action="javascript: get_config();" id="config_form">
+      Server URL:
+      <input type="text" id="url" class="url" value="your URL here">
+
+      <div class="param">
+        <div class="label">
+          Append GPS coordinates to URL:<br>
+          <small>(can eat your phone battery)</small>
+        </div>
+        <div class="checkbox">
+          <input type="checkbox" id="config_location" class="checkbox">
+        </div>
+      </div>
+
+      <div class="param">
+        <div class="label">
+          Vibrate on bluetooth connection loss:
+        </div>
+        <div class="checkbox">
+          <input type="checkbox" id="config_vibrate" class="checkbox">
+        </div>
+      </div>
+
+      <div class="param">
+        <div class="label">
+          Seconds dots blinking:<br>
+          <small>(can eat your pebble battery)</small>
+        </div>
+        <div class="checkbox">
+          <input type="checkbox" id="config_seconds" class="checkbox">
+        </div>
+      </div>
       <input type="submit" id="save" class="submit" value="save and apply">
     </form>
-    <br><br><br>
-    sample server output:
+    <hr size="1" />
+
+    Sample server output:<br>
+    <small>(see documentation on <a href="https://github.com/bahbka/pebble-my-data/blob/master/README.md">github</a>)</small>
     <pre class="example">
 {
   "content": "Hello\\nWorld!",
   "refresh": 300, // refresh delay, seconds
   "vibrate": 0,   // 0..3, 0 - don't vibrate
   "font": 1,      // 1..8, try them all
-  "theme": 0      // 0 - black, 1 - white
+  "theme": 0,     // 0 - black, 1 - white
+  "scroll": 1,    // scroll up after update
+  "light": 1,     // turn on light
+  "blink": 1      // blink content (count)
 }
 
 GET param short=1 or long=1 added to URL on
 short or long select button update
     </pre>
-
-    <script>
-      function settings() {
-        var form = document.getElementById('settings_form');
-        for (configuration = {}, i = 0; i < form.length ; i++) {
-	  id = form[i].id;
-	  if (id != "save") {
-	    configuration[id] = form[i].value;
-	  }
-	}
-        return window.location.href = "pebblejs://close#" + encodeURIComponent(JSON.stringify(configuration));
-      }
-    </script>
   </body>
 </html>

@@ -1,11 +1,18 @@
 // -*-coding: utf-8 -*-
 // vim: sw=2 ts=2 expandtab ai
 
-//TODO geolocation
+var MSG = {
+  PERIODIC_UPDATE: 0,
+  SHORT_PRESS_UPDATE: 1,
+  LONG_PRESS_UPDATE: 2,
+  JSON_RESPONSE: 3,
+  CONFIG: 4,
+  ERROR: 5
+};
 
 var config = {};
 
-function fetch_data(url) {
+function http_request(url) {
   var req = new XMLHttpRequest();
 
   req.open('GET', url, true);
@@ -16,20 +23,55 @@ function fetch_data(url) {
         try {
           var response = JSON.parse(req.responseText);
           //console.log("success: " + JSON.stringify(response));
+          response["msg_type"] = MSG.JSON_RESPONSE;
           Pebble.sendAppMessage(response);
 
         } catch(e) {
           console.log("json parse error");
+          Pebble.sendAppMessage({ "msg_type": MSG.ERROR });
         }
 
       } else {
         console.log("fetch error");
+        Pebble.sendAppMessage({ "msg_type": MSG.ERROR });
       }
     }
 
   }
 
   req.send(null);
+}
+
+function fetch_data(url) {
+  if (config["config_location"]) {
+    if(navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          var latitude = position.coords.latitude;
+          var longitude = position.coords.longitude;
+
+          var s = (url.indexOf("?")===-1)?"?":"&";
+          http_request(url + s + 'lat=' + latitude + '&lon=' + longitude);
+        },
+        function(error) {
+          //error error.message
+          /*
+            TODO inform user about error
+            PERMISSION_DENIED (numeric value 1)
+            POSITION_UNAVAILABLE (numeric value 2)
+            TIMEOUT (numeric value 3)
+          */
+          http_request(url);
+        },
+        { maximumAge: 1800000 } // 30 minutes
+      );
+    } else {
+      //error geolocation not supported
+      http_request(url);
+    }
+  } else {
+    http_request(url);
+  }
 }
 
 Pebble.addEventListener("ready",
@@ -44,7 +86,8 @@ Pebble.addEventListener("ready",
         //console.log("loaded config = " + JSON.stringify(config));
 
       } catch(e) {
-        console.log("json parse error");
+        console.log("stored config json parse error");
+        Pebble.sendAppMessage({ "msg_type": MSG.ERROR });
       }
     }
   }
@@ -53,21 +96,25 @@ Pebble.addEventListener("ready",
 Pebble.addEventListener("appmessage",
   function(e) {
     //console.log("received message: " + JSON.stringify(e.payload));
+
+    config["msg_type"] = MSG.CONFIG;
+    Pebble.sendAppMessage(config); // send current config to pebble
+
     if (config["url"]) {
       var url = config["url"];
       var s = (url.indexOf("?")===-1)?"?":"&";
 
-      if (e.payload["refresh"] == 1) {
+      if (e.payload["refresh"] == MSG.SHORT_PRESS_UPDATE) {
         url = url + s + "short=1";
 
-      } else if (e.payload["refresh"] == 2) {
+      } else if (e.payload["refresh"] == MSG.LONG_PRESS_UPDATE) {
         url = url + s + "long=1";
       }
 
       fetch_data(url);
 
     } else {
-      Pebble.sendAppMessage({ "content": "URL not defined, chech settings in Pebble App" });
+      Pebble.sendAppMessage({ "msg_type": MSG.JSON_RESPONSE, "content": "URL not defined, check settings in Pebble App" });
     }
   }
 );
@@ -78,8 +125,9 @@ Pebble.addEventListener('showConfiguration', function () {
   } else {
     url = "";
   }
+  //console.log("put options = " + JSON.stringify(config));
 
-  Pebble.openURL('data:text/html,'+encodeURI('_HTMLMARKER_<!--.html'.replace('"_URL_"', url, 'g')));
+  Pebble.openURL('data:text/html,'+encodeURI('_HTMLMARKER_<!--.html'.replace('_CONFIG_', JSON.stringify(config), 'g')));
 });
 
 Pebble.addEventListener("webviewclosed", function(e) {
@@ -89,11 +137,15 @@ Pebble.addEventListener("webviewclosed", function(e) {
 
     window.localStorage.setItem('pebble-my-data', e.response);
 
+    config["msg_type"] = MSG.CONFIG;
+    //console.log("push config = " + JSON.stringify(config));
+    Pebble.sendAppMessage(config); // send current config to pebble
+
     if (config["url"]) {
       fetch_data(config["url"]);
 
     } else {
-      Pebble.sendAppMessage({ "content": "URL not defined, chech settings in Pebble App" });
+      Pebble.sendAppMessage({ "msg_type": MSG.JSON_RESPONSE, "content": "URL not defined, check settings in Pebble App" });
     }
   }
 });
