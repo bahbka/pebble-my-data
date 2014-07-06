@@ -84,6 +84,8 @@ Pebble.addEventListener("ready",
       try {
         config = JSON.parse(json);
         //console.log("loaded config = " + JSON.stringify(config));
+        config["msg_type"] = MSG.CONFIG;
+        Pebble.sendAppMessage(config); // send current config to pebble
 
       } catch(e) {
         console.log("stored config json parse error");
