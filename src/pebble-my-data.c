@@ -455,7 +455,7 @@ void in_received_handler(DictionaryIterator *received, void *context) {
 
       Tuple *content_tuple = dict_find(received, KEY_CONTENT);
       if (content_tuple) {
-        memcpy(content, content_tuple->value->cstring, strlen(content_tuple->value->cstring));
+        memcpy(content, content_tuple->value->cstring, strlen(content_tuple->value->cstring) + 1);
 
         Tuple *scroll_up_tuple = dict_find(received, KEY_SCROLL);
         bool scroll_up = false;
