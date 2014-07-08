@@ -76,7 +76,8 @@ JSON output example (some fields are optional):
       "theme": 0,
       "scroll": 1,
       "light": 1,
-      "blink": 3
+      "blink": 3,
+      "updown": 1
     }
 
 GET param short=1 or long=1 added to URL on short or long select button update
@@ -123,6 +124,10 @@ Next update delay in seconds.
 ### blink
 
 - 1..10 - Blink content count (blinks with black/white for "count" times)
+
+### updown
+- 0 use up/down buttons for scrolling
+- 1 use up/down buttons for update, appending up=1|2/down=1|2 params (1=short/2=long)
 
 ## Bugs
 
