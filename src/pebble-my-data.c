@@ -47,6 +47,8 @@ static uint8_t blink_count;
 bool config_vibrate = true;
 bool config_seconds = false;
 
+bool updown = false;
+
 #define DEFAULT_REFRESH 300*1000
 #define RETRY_DELAY 60*1000
 #define REQUEST_TIMEOUT 30*1000
@@ -68,6 +70,7 @@ enum { // AppMessage keys
   KEY_SCROLL,
   KEY_LIGHT,
   KEY_BLINK,
+  KEY_UPDOWN,
   KEY_CONFIG_LOCATION,
   KEY_CONFIG_VIBRATE,
   KEY_CONFIG_SECONDS
@@ -75,8 +78,12 @@ enum { // AppMessage keys
 
 enum { // msg type
   MSG_PERIODIC_UPDATE,
-  MSG_SHORT_PRESS_UPDATE,
-  MSG_LONG_PRESS_UPDATE,
+  MSG_SELECT_SHORT_PRESS_UPDATE,
+  MSG_SELECT_LONG_PRESS_UPDATE,
+  MSG_UP_SHORT_PRESS_UPDATE,
+  MSG_UP_LONG_PRESS_UPDATE,
+  MSG_DOWN_SHORT_PRESS_UPDATE,
+  MSG_DOWN_LONG_PRESS_UPDATE,
   MSG_JSON_RESPONSE,
   MSG_CONFIG,
   MSG_ERROR
@@ -89,6 +96,33 @@ enum { // themes
 
 static uint8_t update_type = MSG_PERIODIC_UPDATE;
 
+// protos
+static void fill_layer(Layer *layer, GContext* ctx);
+
+static void request_update();
+static void schedule_update(uint32_t delay, uint8_t type);
+static void request_timeout();
+
+static void draw_digit(BitmapLayer *position, char digit);
+
+static void handle_timer_tick(struct tm *tick_time, TimeUnits units_changed);
+static void handle_battery(BatteryChargeState charge_state);
+static void handle_bluetooth(bool connected);
+
+static void change_info_theme(uint8_t theme);
+static void blink_info();
+static void update_info_layer(char *content, uint8_t font, bool scroll_up, bool new_updown);
+static void change_theme(uint8_t t);
+
+static void select_click_handler(ClickRecognizerRef recognizer, void *context);
+static void select_long_click_handler(ClickRecognizerRef recognizer, void *context);
+static void up_click_handler(ClickRecognizerRef recognizer, void *context);
+static void up_long_click_handler(ClickRecognizerRef recognizer, void *context);
+static void down_click_handler(ClickRecognizerRef recognizer, void *context);
+static void down_long_click_handler(ClickRecognizerRef recognizer, void *context);
+static void click_config_provider(void *context);
+static void click_config_provider_updown(void *context);
+
 // fill layer used for drawing line and battery charge
 static void fill_layer(Layer *layer, GContext* ctx) {
   if (theme != THEME_BLACK) {
@@ -98,8 +132,6 @@ static void fill_layer(Layer *layer, GContext* ctx) {
   }
   graphics_fill_rect(ctx, layer_get_bounds(layer), 0, GCornerNone);
 }
-
-static void request_timeout(); // proto
 
 // request data update thru AppMessage
 static void request_update() {
@@ -233,7 +265,7 @@ static void handle_bluetooth(bool connected) {
 }
 
 // update data in main layer (content, font)
-static void update_info_layer(char *content, uint8_t font, bool scroll_up) {
+static void update_info_layer(char *content, uint8_t font, bool scroll_up, bool new_updown) {
   // change font
   switch (font) {
     case 1:
@@ -262,6 +294,22 @@ static void update_info_layer(char *content, uint8_t font, bool scroll_up) {
       break;
     default:
       break;
+  }
+
+  // change up/down buttons behavior
+  if (new_updown != updown) {
+    if (new_updown) {
+      scroll_layer_set_callbacks(scroll_layer, (ScrollLayerCallbacks) {
+        .click_config_provider = &click_config_provider_updown
+      });
+      scroll_layer_set_click_config_onto_window(scroll_layer, window);
+    } else {
+      scroll_layer_set_callbacks(scroll_layer, (ScrollLayerCallbacks) {
+        .click_config_provider = &click_config_provider
+      });
+      scroll_layer_set_click_config_onto_window(scroll_layer, window);
+    }
+    updown = new_updown;
   }
 
   text_layer_set_text(text_info_layer, content); // set text
@@ -467,12 +515,19 @@ void in_received_handler(DictionaryIterator *received, void *context) {
           scroll_up = true;
         }
 
-        Tuple *font = dict_find(received, KEY_FONT);
-        if (font) {
-          update_info_layer(content, font->value->uint8, scroll_up);
-        } else {
-          update_info_layer(content, 0, scroll_up);
+        Tuple *updown_tuple = dict_find(received, KEY_UPDOWN);
+        bool updown_beh = false;
+        if (updown_tuple && updown_tuple->value->uint8 == 1) {
+          updown_beh = true;
         }
+
+        Tuple *font_tuple = dict_find(received, KEY_FONT);
+        uint8_t font = 0;
+        if (font) {
+          font = font_tuple->value->uint8;
+        }
+
+        update_info_layer(content, font, scroll_up, updown_beh);
       }
 
       // maybe need to vibrate?
@@ -532,6 +587,50 @@ void in_received_handler(DictionaryIterator *received, void *context) {
   }
 }
 
+// force update on up short click
+static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
+  if (blink_count > 0) { // if blinking - stop it!
+    blink_count = 0;
+    blink_info();
+
+  } else {
+    schedule_update(0, MSG_UP_SHORT_PRESS_UPDATE);
+  }
+}
+
+// force update on up long click
+static void up_long_click_handler(ClickRecognizerRef recognizer, void *context) {
+  if (blink_count > 0) { // if blinking - stop it!
+    blink_count = 0;
+    blink_info();
+
+  } else {
+    schedule_update(0, MSG_UP_LONG_PRESS_UPDATE);
+  }
+}
+
+// force update on down short click
+static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
+  if (blink_count > 0) { // if blinking - stop it!
+    blink_count = 0;
+    blink_info();
+
+  } else {
+    schedule_update(0, MSG_DOWN_SHORT_PRESS_UPDATE);
+  }
+}
+
+// force update on down long click
+static void down_long_click_handler(ClickRecognizerRef recognizer, void *context) {
+  if (blink_count > 0) { // if blinking - stop it!
+    blink_count = 0;
+    blink_info();
+
+  } else {
+    schedule_update(0, MSG_DOWN_LONG_PRESS_UPDATE);
+  }
+}
+
 // force update on select short click
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
   if (blink_count > 0) { // if blinking - stop it!
@@ -539,7 +638,7 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
     blink_info();
 
   } else {
-    schedule_update(0, MSG_SHORT_PRESS_UPDATE);
+    schedule_update(0, MSG_SELECT_SHORT_PRESS_UPDATE);
   }
 }
 
@@ -550,7 +649,7 @@ static void select_long_click_handler(ClickRecognizerRef recognizer, void *conte
     blink_info();
 
   } else {
-    schedule_update(0, MSG_LONG_PRESS_UPDATE);
+    schedule_update(0, MSG_SELECT_LONG_PRESS_UPDATE);
   }
 }
 
@@ -558,6 +657,16 @@ static void select_long_click_handler(ClickRecognizerRef recognizer, void *conte
 static void click_config_provider(void *context) {
   window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
   window_long_click_subscribe(BUTTON_ID_SELECT, 0, select_long_click_handler, NULL);
+}
+
+// handle select/up/down buttons clicks
+static void click_config_provider_updown(void *context) {
+  window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
+  window_long_click_subscribe(BUTTON_ID_SELECT, 0, select_long_click_handler, NULL);
+  window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
+  window_long_click_subscribe(BUTTON_ID_UP, 0, up_long_click_handler, NULL);
+  window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
+  window_long_click_subscribe(BUTTON_ID_DOWN, 0, down_long_click_handler, NULL);
 }
 
 // prepare window!

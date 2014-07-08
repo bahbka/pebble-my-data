@@ -3,11 +3,15 @@
 
 var MSG = {
   PERIODIC_UPDATE: 0,
-  SHORT_PRESS_UPDATE: 1,
-  LONG_PRESS_UPDATE: 2,
-  JSON_RESPONSE: 3,
-  CONFIG: 4,
-  ERROR: 5
+  SELECT_SHORT_PRESS_UPDATE: 1,
+  SELECT_LONG_PRESS_UPDATE: 2,
+  UP_SHORT_PRESS_UPDATE: 3,
+  UP_LONG_PRESS_UPDATE: 4,
+  DOWN_SHORT_PRESS_UPDATE: 5,
+  DOWN_LONG_PRESS_UPDATE: 6,
+  JSON_RESPONSE: 7,
+  CONFIG: 8,
+  ERROR: 9
 };
 
 // default settings
@@ -111,11 +115,18 @@ Pebble.addEventListener("appmessage",
       var url = config["url"];
       var s = (url.indexOf("?")===-1)?"?":"&";
 
-      if (e.payload["refresh"] == MSG.SHORT_PRESS_UPDATE) {
-        url = url + s + "short=1";
-
-      } else if (e.payload["refresh"] == MSG.LONG_PRESS_UPDATE) {
-        url = url + s + "long=1";
+      if (e.payload["refresh"] == MSG.SELECT_SHORT_PRESS_UPDATE) {
+        url = url + s + "select=1";
+      } else if (e.payload["refresh"] == MSG.SELECT_LONG_PRESS_UPDATE) {
+        url = url + s + "select=2";
+      } else if (e.payload["refresh"] == MSG.UP_SHORT_PRESS_UPDATE) {
+        url = url + s + "up=1";
+      } else if (e.payload["refresh"] == MSG.UP_LONG_PRESS_UPDATE) {
+        url = url + s + "up=2";
+      } else if (e.payload["refresh"] == MSG.DOWN_SHORT_PRESS_UPDATE) {
+        url = url + s + "down=1";
+      } else if (e.payload["refresh"] == MSG.DOWN_LONG_PRESS_UPDATE) {
+        url = url + s + "down=2";
       }
 
       fetch_data(url);

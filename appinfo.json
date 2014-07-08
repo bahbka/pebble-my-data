@@ -3,8 +3,8 @@
   "shortName": "My Data",
   "longName": "My Data",
   "companyName": "bahbka",
-  "versionCode": 203,
-  "versionLabel": "2.0.3",
+  "versionCode": 210,
+  "versionLabel": "2.1.0",
   "watchapp": {
     "watchface": false
   },
@@ -19,9 +19,10 @@
     "scroll":           6,
     "light":            7,
     "blink":            8,
-    "config_location":  9,
-    "config_vibrate":  10,
-    "config_seconds":  11
+    "updown":           9,
+    "config_location": 10,
+    "config_vibrate":  11,
+    "config_seconds":  12
   },
   "resources": {
     "media": [
