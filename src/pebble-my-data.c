@@ -523,7 +523,7 @@ void in_received_handler(DictionaryIterator *received, void *context) {
 
         Tuple *font_tuple = dict_find(received, KEY_FONT);
         uint8_t font = 0;
-        if (font) {
+        if (font_tuple) {
           font = font_tuple->value->uint8;
         }
 
