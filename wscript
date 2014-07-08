@@ -21,4 +21,4 @@ def build(ctx):
                     target='pebble-app.elf')
 
     ctx.pbl_bundle(elf='pebble-app.elf',
-                   js=ctx.path.ant_glob('src/js/**/*.js'))
+                   js=ctx.path.ant_glob('src/js/**/pebble-js-app.js'))
