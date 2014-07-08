@@ -13,8 +13,10 @@ Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 * Fetch JSON from custom URL, specified in settings
 * No companion app required, using PebbleKit JS
 * Force update with select button
-* Append short=1 or long=1 GET param on short/long select button update
+* Append select=1/select=2 GET param on short/long select button update
+* Ability to change up/down buttons behavior from JSON (scrolling or up=1|2,down=1|2 params)
 * Append coordinates to URL (configurable)
+* Append HTTP request header Pebble-Token (unique to device/app pair), can be used for server-side device identification
 * Scrollable data area
 * Custom update interval, specified in JSON
 * Vibrate on update if specified in JSON
@@ -28,6 +30,11 @@ Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 * Digital clock (12h/24h support), seconds dots blinking (configurable)
 
 ## Changelog
+
+### 2.1.2
+- Ability to change up/down buttons behavior from JSON (scrolling or up=1|2,down=1|2 params)
+- Added HTTP request header Pebble-Token (unique to device/app pair), can be used for server-side device identification
+- **WARNING:** Changed short=1/long=1 params to select=1/select=2 (sorry for this)
 
 ### 2.0.3
 
@@ -43,7 +50,7 @@ Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 
 ### 1.1.0
 
-- Append short=1 or long=1 GET param to URL on short/long select button update 
+- Append short=1 or long=1 GET param to URL on short/long select button update (changed to select=1/select=2 in 2.1.2)
 
 ### 1.0.0
 
