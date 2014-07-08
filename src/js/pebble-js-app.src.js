@@ -25,6 +25,8 @@ function http_request(url) {
   var req = new XMLHttpRequest();
 
   req.open('GET', url, true);
+  req.setRequestHeader('Pebble-Token', Pebble.getAccountToken());
+
   req.onload = function(e) {
 
     if (req.readyState == 4) {
