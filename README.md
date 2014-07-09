@@ -140,12 +140,12 @@ Salt for Pebble-Auth hash (see below)
 ## Auth
 
 Authentication algorithm example (reinvent the wheel):
-1. -> Pebble makes HTTP request with Pebble-Token header (Pebble App Token by default, unique to device/app pair, can be changed at configuration page, clear to restore default)
-2. <- Server answers with JSON like { ..., "content": "logging in...", "refresh": 5, "auth": "randomsalt", ... }
-3.    Pebble calculates MD5(MD5(password)+"randomsalt"), saves it as auth token and uses as Pebble-Auth HTTP request header in future requests.
-4. -> Pebble makes HTTP request after 5 seconds with Pebble-Token header and with Pebble-Auth header (calculated and stored in previous step)
-5.    Server checks Pebble-Token and Pebble-Auth headers if data equal data in database (Pebble-Token <=> login, calculate MD5(password_md5_db+"randomsalt"))
-6. <- Server answers with private content (seems your need https for more security), or some error if auth failed; auth field in JSON not needed anymore, until you desire to regenerate auth token with new salt (paranoid mode) or to clear Pebble-Auth header
+  1. -> Pebble makes HTTP request with Pebble-Token header (Pebble App Token by default, unique to device/app pair, can be changed at configuration page, clear to restore default)
+  2. <- Server answers with JSON like { ..., "content": "logging in...", "refresh": 5, "auth": "randomsalt", ... }
+  3.    Pebble calculates MD5(MD5(password)+"randomsalt"), saves it as auth token and uses as Pebble-Auth HTTP request header in future requests.
+  4. -> Pebble makes HTTP request after 5 seconds with Pebble-Token header and with Pebble-Auth header (calculated and stored in previous step)
+  5.    Server checks Pebble-Token and Pebble-Auth headers if data equal data in database (Pebble-Token <=> login, calculate MD5(password_md5_db+"randomsalt"))
+  6. <- Server answers with private content (seems your need https for more security), or some error if auth failed; auth field in JSON not needed anymore, until you desire to regenerate auth token with new salt (paranoid mode) or to clear Pebble-Auth header
 
 To clear Pebble-Auth header, send { ..., "auth": "", ...} (eg logout).
 
