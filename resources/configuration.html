@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!-- -*-coding: utf-8 -*-
-vim: sw=2 ts=2 expandtab ai -->
+vim: sw=2 ts=2 expandtab ai
+-->
 
 <html>
   <head>
@@ -11,7 +12,7 @@ vim: sw=2 ts=2 expandtab ai -->
       small { color: gray }
       a { color: white }
       input { height: 1.5em; font-size: 1.2em; font-weight: bold }
-      .url { width: 93%; margin: 0.5em }
+      .text { width: 93%; margin: 0.5em; text-align: center }
       .submit { width: 93%; margin: 0.4em }
       .param { display: inline-table; width: 95%; height: 3em }
       .label,.checkbox { display: table-cell; vertical-align: middle }
@@ -50,16 +51,37 @@ vim: sw=2 ts=2 expandtab ai -->
         }
         return window.location.href = "pebblejs://close#" + encodeURIComponent(JSON.stringify(config));
       }
+
+      function toggle_visibility(id) {
+        var e = document.getElementById(id);
+        if(e.style.display == 'block')
+          e.style.display = 'none';
+        else
+          e.style.display = 'block';
+      }
     </script>
   </head>
   <body onload="put_config();">
     <h1>My Data</h1>
-    <small>v2.1.2, by bahbka</small>
+    <small>v2.2.0, by bahbka</small>
     <hr size="1" />
 
     <form action="javascript: get_config();" id="config_form">
-      Server URL:
-      <input type="text" id="url" class="url" value="" placeholder="your URL here">
+      Server URL
+      <input type="text" id="url" class="text" value="" placeholder="your URL here">
+
+      <hr size="1" />
+
+      <span onclick="toggle_visibility('auth')">Server auth <small>(optional)</small></span>
+      <div id="auth" style="display: none">
+      Pebble Token
+      <input type="text" id="token" class="text" value="">
+
+      Password
+      <input type="password" id="password" class="text" value="">
+      </div>
+
+      <hr size="1" />
 
       <div class="param">
         <div class="label">
@@ -91,25 +113,9 @@ vim: sw=2 ts=2 expandtab ai -->
       </div>
       <input type="submit" id="save" class="submit" value="save and apply">
     </form>
+
     <hr size="1" />
-
-    Sample server output:<br>
-    <small>(see documentation on <a href="https://github.com/bahbka/pebble-my-data/blob/master/README.md">github</a>)</small>
-    <pre class="example">
-{
-  "content": "Hello\\nWorld!",
-  "refresh": 300, // refresh delay, seconds
-  "vibrate": 0,   // 0..3, 0 - don't vibrate
-  "font": 1,      // 1..8, try them all
-  "theme": 0,     // 0 - black, 1 - white
-  "scroll": 1,    // scroll up after update
-  "light": 1,     // turn on light
-  "blink": 1,     // blink content (count)
-  "updown": 1     // change up/down behavior
-}
-
-GET param select=1 or select=2 added to URL on
-short or long select button update
-    </pre>
+    <small>see documentation on <a href="https://github.com/bahbka/pebble-my-data/blob/master/README.md">github</a></small><br>
+    <small><a href="http://forums.getpebble.com/discussion/13590">discussion</a> at pebble forums</small>
   </body>
 </html>

@@ -17,6 +17,7 @@ Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 * Ability to change up/down buttons behavior from JSON (scrolling or up=1|2,down=1|2 params)
 * Append coordinates to URL (configurable)
 * Append HTTP request header Pebble-Token (unique to device/app pair), can be used for server-side device identification
+* Authentication (see documentation)
 * Scrollable data area
 * Custom update interval, specified in JSON
 * Vibrate on update if specified in JSON
@@ -30,6 +31,9 @@ Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 * Digital clock (12h/24h support), seconds dots blinking (configurable)
 
 ## Changelog
+
+### 2.2.0
+- Authentication (see documentation)
 
 ### 2.1.2
 - Ability to change up/down buttons behavior from JSON (scrolling or up=1|2,down=1|2 params)
@@ -77,7 +81,8 @@ JSON output example (some fields are optional):
       "scroll": 1,
       "light": 1,
       "blink": 3,
-      "updown": 1
+      "updown": 1,
+      "auth": "salt"
     }
 
 GET param short=1 or long=1 added to URL on short or long select button update
@@ -128,6 +133,21 @@ Next update delay in seconds.
 ### updown
 - 0 use up/down buttons for scrolling
 - 1 use up/down buttons for update, appending up=1|2/down=1|2 params (1=short/2=long)
+
+### auth
+Salt for Pebble-Auth hash (see below)
+
+## Auth
+
+Authentication algorithm example (reinvent the wheel):
+1. -> Pebble makes HTTP request with Pebble-Token header (Pebble App Token by default, unique to device/app pair, can be changed at configuration page, clear to restore default)
+2. <- Server answers with JSON like { ..., "content": "logging in...", "refresh": 5, "auth": "randomsalt", ... }
+3.    Pebble calculates MD5(MD5(password)+"randomsalt"), saves it as auth token and uses as Pebble-Auth HTTP request header in future requests.
+4. -> Pebble makes HTTP request after 5 seconds with Pebble-Token header and with Pebble-Auth header (calculated and stored in previous step)
+5.    Server checks Pebble-Token and Pebble-Auth headers if data equal data in database (Pebble-Token <=> login, calculate MD5(password_md5_db+"randomsalt"))
+6. <- Server answers with private content (seems your need https for more security), or some error if auth failed; auth field in JSON not needed anymore, until you desire to regenerate auth token with new salt (paranoid mode) or to clear Pebble-Auth header
+
+To clear Pebble-Auth header, send { ..., "auth": "", ...} (eg logout).
 
 ## Bugs
 
