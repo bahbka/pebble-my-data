@@ -25,7 +25,7 @@ Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 * Black/white theme switched from JSON
 * Turn on light from JSON
 * Blink content from JSON
-* Scroll-up content after update from JSON
+* Define scroll offset in percent after update from JSON
 * Vibrate on bluetooth connection loss (configurable)
 * Watches battery charge status
 * Digital clock (12h/24h support), seconds dots blinking (configurable)
@@ -78,7 +78,7 @@ JSON output example (some fields are optional):
       "vibrate": 0,
       "font": 4,
       "theme": 0,
-      "scroll": 1,
+      "scroll": 33,
       "light": 1,
       "blink": 3,
       "updown": 1,
@@ -117,9 +117,8 @@ Next update delay in seconds.
 - 1 - White
 
 ### scroll
-
-- 0 - Keep position
-- 1 - Scroll up
+Scroll content to offset (in percent 0..100).
+If param not defined or >100 - position will be kept.
 
 ### light
 

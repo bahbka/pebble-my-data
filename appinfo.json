@@ -3,8 +3,8 @@
   "shortName": "My Data",
   "longName": "My Data",
   "companyName": "bahbka",
-  "versionCode": 230,
-  "versionLabel": "2.3.0",
+  "versionCode": 231,
+  "versionLabel": "2.3.1",
   "watchapp": {
     "watchface": false
   },

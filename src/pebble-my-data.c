@@ -59,6 +59,8 @@ bool updown = false;
 
 #define CONTENT_SIZE 1024
 
+#define DONT_SCROLL 255
+
 static char content[CONTENT_SIZE];
 
 enum { // AppMessage keys
@@ -115,7 +117,7 @@ static void handle_shake(AccelAxisType axis, int32_t direction);
 
 static void change_info_theme(uint8_t theme);
 static void blink_info();
-static void update_info_layer(char *content, uint8_t font, bool scroll_up, bool new_updown);
+static void update_info_layer(char *content, uint8_t font, uint8_t scroll_offset, bool new_updown);
 static void change_theme(uint8_t t);
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context);
@@ -273,7 +275,7 @@ static void handle_shake(AccelAxisType axis, int32_t direction) {
 }
 
 // update data in main layer (content, font)
-static void update_info_layer(char *content, uint8_t font, bool scroll_up, bool new_updown) {
+static void update_info_layer(char *content, uint8_t font, uint8_t scroll_offset, bool new_updown) {
   // change font
   switch (font) {
     case 1:
@@ -330,8 +332,14 @@ static void update_info_layer(char *content, uint8_t font, bool scroll_up, bool 
   }
   text_layer_set_size(text_info_layer, max_size); // resize layer
   scroll_layer_set_content_size(scroll_layer, GSize(144, max_size.h)); // resize scroll layer
-  if (scroll_up) {
-    scroll_layer_set_content_offset(scroll_layer, GPoint(0, 0), true); // scroll to beginning with animation
+
+  if (scroll_offset != DONT_SCROLL) {
+    GPoint offset;
+    offset.x = 0;
+
+    offset.y = -(int)((float)max_size.h / 100.0 * scroll_offset);
+
+    scroll_layer_set_content_offset(scroll_layer, offset, true); // scroll to beginning with animation
   }
 }
 
@@ -532,10 +540,12 @@ void in_received_handler(DictionaryIterator *received, void *context) {
       if (content_tuple) {
         memcpy(content, content_tuple->value->cstring, strlen(content_tuple->value->cstring) + 1);
 
-        Tuple *scroll_up_tuple = dict_find(received, KEY_SCROLL);
-        bool scroll_up = false;
-        if (scroll_up_tuple && scroll_up_tuple->value->uint8 == 1) {
-          scroll_up = true;
+        Tuple *scroll_offset_tuple = dict_find(received, KEY_SCROLL);
+        uint8_t scroll_offset = DONT_SCROLL;
+        if (scroll_offset_tuple) {
+          scroll_offset = scroll_offset_tuple->value->uint8;
+          if (scroll_offset > 100)
+            scroll_offset = DONT_SCROLL;
         }
 
         Tuple *updown_tuple = dict_find(received, KEY_UPDOWN);
@@ -550,7 +560,7 @@ void in_received_handler(DictionaryIterator *received, void *context) {
           font = font_tuple->value->uint8;
         }
 
-        update_info_layer(content, font, scroll_up, updown_beh);
+        update_info_layer(content, font, scroll_offset, updown_beh);
       }
 
       // maybe need to vibrate?
