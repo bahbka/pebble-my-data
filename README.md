@@ -12,7 +12,7 @@ Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 
 * Fetch JSON from custom URL, specified in settings
 * No companion app required, using PebbleKit JS
-* Force update with select button
+* Force update with buttons or shaking
 * Append select=1/select=2 GET param on short/long select button update
 * Ability to change up/down buttons behavior from JSON (scrolling or up=1|2,down=1|2 params)
 * Append coordinates to URL (configurable)
@@ -25,12 +25,17 @@ Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 * Black/white theme switched from JSON
 * Turn on light from JSON
 * Blink content from JSON
-* Define scroll offset in percent after update from JSON
+* Define scroll offset as percentage after update from JSON
 * Vibrate on bluetooth connection loss (configurable)
 * Watches battery charge status
 * Digital clock (12h/24h support), seconds dots blinking (configurable)
 
 ## Changelog
+
+### 2.3.2
+- Update with shake function (append shake=1 GET param while update, configurable)
+- Changed scroll param behavior, now used to define scroll offset as percentage
+- Truncate content if too big
 
 ### 2.2.0
 - Authentication (see documentation)
@@ -117,7 +122,7 @@ Next update delay in seconds.
 - 1 - White
 
 ### scroll
-Scroll content to offset (in percent 0..100).
+Scroll content to offset (as percentage 0..100).
 If param not defined or >100 - position will be kept.
 
 ### light
