@@ -15,6 +15,8 @@ var MSG = {
   ERROR: 10
 };
 
+var CONTENT_MAX_LENGTH = 900;
+
 // default settings
 var config = {
   "config_location": false,
@@ -47,7 +49,9 @@ function http_request(url) {
           //console.log("success: " + JSON.stringify(response));
           response["msg_type"] = MSG.JSON_RESPONSE;
 
-          //TODO truncate content bytes= bytes.substring(0, bytes.length-1);
+          if (response["content"] && response["content"].length > CONTENT_MAX_LENGTH) {
+            response["content"] = response["content"].substring(0, CONTENT_MAX_LENGTH);
+          }
 
           Pebble.sendAppMessage(response);
 
@@ -60,7 +64,7 @@ function http_request(url) {
           }
 
         } catch(e) {
-          console.log("json parse error");
+          console.log("json parse error " + e);
           Pebble.sendAppMessage({ "msg_type": MSG.ERROR });
         }
 
