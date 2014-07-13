@@ -63,7 +63,7 @@ vim: sw=2 ts=2 expandtab ai
   </head>
   <body onload="put_config();">
     <h1>My Data</h1>
-    <small>v2.2.0, by bahbka</small>
+    <small>v2.3.0, by bahbka</small>
     <hr size="1" />
 
     <form action="javascript: get_config();" id="config_form">
@@ -109,6 +109,16 @@ vim: sw=2 ts=2 expandtab ai
         </div>
         <div class="checkbox">
           <input type="checkbox" id="config_seconds" class="checkbox">
+        </div>
+      </div>
+
+      <div class="param">
+        <div class="label">
+          Update with shaking:<br>
+          <small>(possible unnecessary updates)</small>
+        </div>
+        <div class="checkbox">
+          <input type="checkbox" id="config_shake" class="checkbox">
         </div>
       </div>
       <input type="submit" id="save" class="submit" value="save and apply">

@@ -46,6 +46,7 @@ static uint8_t blink_count;
 
 bool config_vibrate = true;
 bool config_seconds = false;
+bool config_shake = false;
 
 bool updown = false;
 
@@ -73,7 +74,8 @@ enum { // AppMessage keys
   KEY_UPDOWN,
   KEY_CONFIG_LOCATION,
   KEY_CONFIG_VIBRATE,
-  KEY_CONFIG_SECONDS
+  KEY_CONFIG_SECONDS,
+  KEY_CONFIG_SHAKE
 };
 
 enum { // msg type
@@ -84,6 +86,7 @@ enum { // msg type
   MSG_UP_LONG_PRESS_UPDATE,
   MSG_DOWN_SHORT_PRESS_UPDATE,
   MSG_DOWN_LONG_PRESS_UPDATE,
+  MSG_SHAKE_UPDATE,
   MSG_JSON_RESPONSE,
   MSG_CONFIG,
   MSG_ERROR
@@ -108,6 +111,7 @@ static void draw_digit(BitmapLayer *position, char digit);
 static void handle_timer_tick(struct tm *tick_time, TimeUnits units_changed);
 static void handle_battery(BatteryChargeState charge_state);
 static void handle_bluetooth(bool connected);
+static void handle_shake(AccelAxisType axis, int32_t direction);
 
 static void change_info_theme(uint8_t theme);
 static void blink_info();
@@ -262,6 +266,10 @@ static void handle_bluetooth(bool connected) {
       vibes_long_pulse(); // achtung! phone lost!
     }
   }
+}
+
+static void handle_shake(AccelAxisType axis, int32_t direction) {
+  schedule_update(0, MSG_SHAKE_UPDATE);
 }
 
 // update data in main layer (content, font)
@@ -492,6 +500,21 @@ void in_received_handler(DictionaryIterator *received, void *context) {
             config_seconds = false;
             tick_timer_service_subscribe(MINUTE_UNIT, handle_timer_tick);
             handle_timer_tick(NULL, MINUTE_UNIT);
+          }
+        }
+      }
+
+      Tuple *config_shake_tuple = dict_find(received, KEY_CONFIG_SHAKE);
+      if (config_shake_tuple) {
+        if (strcmp(config_shake_tuple->value->cstring, "true") == 0) {
+          if (!config_shake) {
+            config_shake = true;
+            accel_tap_service_subscribe(handle_shake);
+          }
+        } else {
+          if (config_shake) {
+            config_shake = false;
+            accel_tap_service_unsubscribe();
           }
         }
       }
@@ -752,6 +775,11 @@ static void window_unload(Window *window) {
   tick_timer_service_unsubscribe();
   battery_state_service_unsubscribe();
   bluetooth_connection_service_unsubscribe();
+
+  if (config_shake) {
+    config_shake = false;
+    accel_tap_service_unsubscribe();
+  }
 
   text_layer_destroy(text_date_layer);
   text_layer_destroy(text_info_layer);

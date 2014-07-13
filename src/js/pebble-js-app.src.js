@@ -9,16 +9,18 @@ var MSG = {
   UP_LONG_PRESS_UPDATE: 4,
   DOWN_SHORT_PRESS_UPDATE: 5,
   DOWN_LONG_PRESS_UPDATE: 6,
-  JSON_RESPONSE: 7,
-  CONFIG: 8,
-  ERROR: 9
+  SHAKE_UPDATE: 7,
+  JSON_RESPONSE: 8,
+  CONFIG: 9,
+  ERROR: 10
 };
 
 // default settings
 var config = {
   "config_location": false,
   "config_vibrate": true,
-  "config_seconds": true
+  "config_seconds": true,
+  "config_shake": false
 };
 
 function http_request(url) {
@@ -44,6 +46,9 @@ function http_request(url) {
           var response = JSON.parse(req.responseText);
           //console.log("success: " + JSON.stringify(response));
           response["msg_type"] = MSG.JSON_RESPONSE;
+
+          //TODO truncate content bytes= bytes.substring(0, bytes.length-1);
+
           Pebble.sendAppMessage(response);
 
           if (response["auth"] != null) {
@@ -146,6 +151,8 @@ Pebble.addEventListener("appmessage",
         url = url + s + "down=1";
       } else if (e.payload["refresh"] == MSG.DOWN_LONG_PRESS_UPDATE) {
         url = url + s + "down=2";
+      } else if (e.payload["refresh"] == MSG.SHAKE_UPDATE) {
+        url = url + s + "shake=1";
       }
 
       fetch_data(url);
