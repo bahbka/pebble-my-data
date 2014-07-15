@@ -25,6 +25,50 @@ var config = {
   "config_shake": false
 };
 
+function extract_fields(raw) {
+  var STR_FIELD = 1;
+  var INT_FIELD = 2;
+
+  var FIELDS = {
+    "content": STR_FIELD,
+    "refresh": INT_FIELD,
+    "vibrate": INT_FIELD,
+    "font":    INT_FIELD,
+    "theme":   INT_FIELD,
+    "scroll":  INT_FIELD,
+    "light":   INT_FIELD,
+    "blink":   INT_FIELD,
+    "updown":  INT_FIELD,
+    "auth":    STR_FIELD
+  };
+
+  var result = {};
+
+  function parse(obj) {
+    for (var field in obj) {
+      if (typeof obj[field] === 'object'){
+        parse(obj[field]);
+      } else if (field in FIELDS) {
+        if (FIELDS[field] == STR_FIELD) {
+          result[field] = (result[field] === undefined ? '' : result[field] + '\n\n') + obj[field];
+        } else if (FIELDS[field] == INT_FIELD && result[field] === undefined) {
+          if (typeof obj[field] === 'string') {
+            var i = parseInt(obj[field]);
+            if (!isNaN(i)) {
+              result[field] = i;
+            }
+          } else {
+            result[field] = obj[field];
+          }
+        }
+      }
+    }
+  }
+
+  parse(raw);
+  return result;
+}
+
 function http_request(url) {
   var req = new XMLHttpRequest();
 
@@ -45,8 +89,9 @@ function http_request(url) {
     if (req.readyState == 4) {
       if(req.status == 200) {
         try {
-          var response = JSON.parse(req.responseText);
+          var response = extract_fields(JSON.parse(req.responseText));
           //console.log("success: " + JSON.stringify(response));
+
           response["msg_type"] = MSG.JSON_RESPONSE;
 
           if (response["content"] && response["content"].length > CONTENT_MAX_LENGTH) {
