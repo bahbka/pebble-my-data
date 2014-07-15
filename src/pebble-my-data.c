@@ -50,6 +50,8 @@ bool config_shake = false;
 
 bool updown = false;
 
+bool update_in_progress = false;
+
 #define DEFAULT_REFRESH 300*1000
 #define RETRY_DELAY 60*1000
 #define REQUEST_TIMEOUT 30*1000
@@ -143,6 +145,7 @@ static void fill_layer(Layer *layer, GContext* ctx) {
 static void request_update() {
   // show update icon
   bitmap_layer_set_bitmap(update_icon_layer, update_icon_bitmap);
+  update_in_progress = true;
 
   // prepare request
   DictionaryIterator *send_message;
@@ -159,22 +162,25 @@ static void request_update() {
 
 // schedule request_update
 static void schedule_update(uint32_t delay, uint8_t type) {
-  if (timeout_timer) {
-    app_timer_cancel(timeout_timer);
-  }
+  if (!update_in_progress) {
+    if (timeout_timer) {
+      app_timer_cancel(timeout_timer);
+    }
 
-  if (timer) {
-    app_timer_cancel(timer);
-  }
+    if (timer) {
+      app_timer_cancel(timer);
+    }
 
-  update_type = type; // can't win callbacks data :( use global variable
-  timeout_timer = app_timer_register(delay, request_update, NULL);
+    update_type = type; // can't win callbacks data :( use global variable
+    timeout_timer = app_timer_register(delay, request_update, NULL);
+  }
 }
 
 // reschedule update if data waiting timed out, also set update_error icon
 static void request_timeout() {
   bitmap_layer_set_bitmap(update_icon_layer, update_error_icon_bitmap);
-  schedule_update(RETRY_DELAY, MSG_PERIODIC_UPDATE);
+  update_in_progress = false;
+  schedule_update(RETRY_DELAY, update_type);
 }
 
 // draw digit on position layer
@@ -472,13 +478,15 @@ void out_sent_handler(DictionaryIterator *sent, void *context) {
 // reschedule update if request_update sending failed, also set update_error icon
 void out_failed_handler(DictionaryIterator *failed, AppMessageResult reason, void *context) {
   bitmap_layer_set_bitmap(update_icon_layer, update_error_icon_bitmap);
-  schedule_update(RETRY_DELAY, MSG_PERIODIC_UPDATE);
+  update_in_progress = false;
+  schedule_update(RETRY_DELAY, update_type);
 }
 
 // reschedule update if received data dropped, also set update_error icon
 void in_dropped_handler(AppMessageResult reason, void *context) {
   bitmap_layer_set_bitmap(update_icon_layer, update_error_icon_bitmap);
-  schedule_update(RETRY_DELAY, MSG_PERIODIC_UPDATE);
+  update_in_progress = false;
+  schedule_update(RETRY_DELAY, update_type);
 }
 
 // process received data
@@ -531,10 +539,12 @@ void in_received_handler(DictionaryIterator *received, void *context) {
 
     } else if (msg_type_tuple->value->uint8 == MSG_ERROR) {
       bitmap_layer_set_bitmap(update_icon_layer, update_error_icon_bitmap);
-      schedule_update(RETRY_DELAY, MSG_PERIODIC_UPDATE);
+      update_in_progress = false;
+      schedule_update(RETRY_DELAY, update_type);
 
     } else if (msg_type_tuple->value->uint8 == MSG_JSON_RESPONSE) {
       bitmap_layer_set_bitmap(update_icon_layer, empty_icon_bitmap); // hide update icon (layer_set_hidden function sometimes works strange)
+      update_in_progress = false;
 
       Tuple *content_tuple = dict_find(received, KEY_CONTENT);
       if (content_tuple) {
