@@ -33,9 +33,7 @@ Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 ## Changelog
 
 ### 2.3.3
-- Extract fields from any level of JSON (useful with [KimonoLabs API](https://www.kimonolabs.com))
-  Multiple content fields will be concatenated with '\n\n'
-  Other fields will be converted to integer, first copy will be used
+- Extract fields from any level of JSON (useful with [KimonoLabs API](https://www.kimonolabs.com)); multiple content fields will be concatenated with '\n\n'; other fields will be converted to integer, first copy will be used
 - Don't schedule update if another one already in progress
 - Keeps update type on retries when update failed
 
