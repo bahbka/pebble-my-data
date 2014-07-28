@@ -147,7 +147,7 @@ function fetch_data(url) {
           */
           http_request(url);
         },
-        { maximumAge: 1800000 } // 30 minutes
+        { maximumAge: 600000 } // 10 minutes
       );
     } else {
       //error geolocation not supported

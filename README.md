@@ -32,6 +32,9 @@ Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 
 ## Changelog
 
+### 2.3.5
+- Reduced GPS cache lifetime (from 30 mins to 10 mins).
+
 ### 2.3.4
 - Workaround for APP_MSG_INTERNAL_ERROR (request last response after 0.1s if occur)
 
