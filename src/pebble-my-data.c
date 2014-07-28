@@ -54,6 +54,7 @@ bool update_in_progress = false;
 
 #define DEFAULT_REFRESH 300*1000
 #define RETRY_DELAY 60*1000
+#define IN_RETRY_DELAY 100
 #define REQUEST_TIMEOUT 30*1000
 
 #define BLINK_INTERVAL 500
@@ -93,7 +94,8 @@ enum { // msg type
   MSG_SHAKE_UPDATE,
   MSG_JSON_RESPONSE,
   MSG_CONFIG,
-  MSG_ERROR
+  MSG_ERROR,
+  MSG_IN_RETRY
 };
 
 enum { // themes
@@ -486,7 +488,7 @@ void out_failed_handler(DictionaryIterator *failed, AppMessageResult reason, voi
 void in_dropped_handler(AppMessageResult reason, void *context) {
   bitmap_layer_set_bitmap(update_icon_layer, update_error_icon_bitmap);
   update_in_progress = false;
-  schedule_update(RETRY_DELAY, update_type);
+  schedule_update(IN_RETRY_DELAY, MSG_IN_RETRY);
 }
 
 // process received data

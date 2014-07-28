@@ -12,7 +12,8 @@ var MSG = {
   SHAKE_UPDATE: 7,
   JSON_RESPONSE: 8,
   CONFIG: 9,
-  ERROR: 10
+  ERROR: 10,
+  IN_RETRY: 11
 };
 
 var CONTENT_MAX_LENGTH = 900;
@@ -98,6 +99,7 @@ function http_request(url) {
             response["content"] = response["content"].substring(0, CONTENT_MAX_LENGTH);
           }
 
+          window.localStorage.setItem('pebble-my-data-response', JSON.stringify(response));
           Pebble.sendAppMessage(response);
 
           if (response["auth"] != null) {
@@ -188,23 +190,29 @@ Pebble.addEventListener("appmessage",
       var url = config["url"];
       var s = (url.indexOf("?")===-1)?"?":"&";
 
-      if (e.payload["refresh"] == MSG.SELECT_SHORT_PRESS_UPDATE) {
-        url = url + s + "select=1";
-      } else if (e.payload["refresh"] == MSG.SELECT_LONG_PRESS_UPDATE) {
-        url = url + s + "select=2";
-      } else if (e.payload["refresh"] == MSG.UP_SHORT_PRESS_UPDATE) {
-        url = url + s + "up=1";
-      } else if (e.payload["refresh"] == MSG.UP_LONG_PRESS_UPDATE) {
-        url = url + s + "up=2";
-      } else if (e.payload["refresh"] == MSG.DOWN_SHORT_PRESS_UPDATE) {
-        url = url + s + "down=1";
-      } else if (e.payload["refresh"] == MSG.DOWN_LONG_PRESS_UPDATE) {
-        url = url + s + "down=2";
-      } else if (e.payload["refresh"] == MSG.SHAKE_UPDATE) {
-        url = url + s + "shake=1";
-      }
+      if (e.payload["refresh"] == MSG.IN_RETRY) {
+          response = window.localStorage.getItem('pebble-my-data-response');
+          Pebble.sendAppMessage(JSON.parse(response));
 
-      fetch_data(url);
+      } else {
+        if (e.payload["refresh"] == MSG.SELECT_SHORT_PRESS_UPDATE) {
+          url = url + s + "select=1";
+        } else if (e.payload["refresh"] == MSG.SELECT_LONG_PRESS_UPDATE) {
+          url = url + s + "select=2";
+        } else if (e.payload["refresh"] == MSG.UP_SHORT_PRESS_UPDATE) {
+          url = url + s + "up=1";
+        } else if (e.payload["refresh"] == MSG.UP_LONG_PRESS_UPDATE) {
+          url = url + s + "up=2";
+        } else if (e.payload["refresh"] == MSG.DOWN_SHORT_PRESS_UPDATE) {
+          url = url + s + "down=1";
+        } else if (e.payload["refresh"] == MSG.DOWN_LONG_PRESS_UPDATE) {
+          url = url + s + "down=2";
+        } else if (e.payload["refresh"] == MSG.SHAKE_UPDATE) {
+          url = url + s + "shake=1";
+        }
+
+        fetch_data(url);
+      }
 
     } else {
       Pebble.sendAppMessage({ "msg_type": MSG.JSON_RESPONSE, "content": "URL not defined, check settings in Pebble App" });
