@@ -1,6 +1,7 @@
 # Pebble My Data App
 
 Pebble watches application to show only your own data, prepared on your own server.
+This software is licensed under the terms of the MIT license.
 Sources available on [github](https://github.com/bahbka/pebble-my-data).
 Inspired by [Pebble Cards](http://keanulee.com/pebblecards).
 
